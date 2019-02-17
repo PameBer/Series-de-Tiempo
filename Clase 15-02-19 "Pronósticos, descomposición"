@@ -1,0 +1,19 @@
+desempleo<-read.csv("C://Users//ALUMNO-D10//Downloads//desempleo.csv")
+tdesemp<-ts(desempleo, start = 2005, end=2018, frequency = 4)
+tdesemp
+##La descomposición de la serie de tiempo nos permite conocer la estacionalidad
+#y la aleatoriedad de la serie
+###Para descomponer una serie de tiempo se utiliza la funcion decompose()
+tdesempadi<-decompose(tdesemp)
+###Para ver graficamente una descomposicion de la ST en R existen dos formas
+plot(tdesempadi)
+###Para descomponer una ST con modelo multiplicativo
+tdesempmul<-decompose(tdesemp, type = "multi")
+plot(tdesempmul)
+##Los modelos multiplicativos se usan cuando la serie invrementa su tendencia y
+#su elemento estacional
+##Para mandar a llamar los elementos que tiene el objeto se usa la funcion names()
+names(tdesempadi)
+names(tdesempmul)
+###Para extraer la variables
+tdesempadi$trend
