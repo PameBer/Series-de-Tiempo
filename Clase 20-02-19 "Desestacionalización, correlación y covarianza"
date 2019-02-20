@@ -1,0 +1,42 @@
+###Importo las bases de datos
+america<-read.csv("C://Users//sala-D19.RTIC-D19//Documents//Series//Datos históricos AMXL - copia.csv")
+cemex<-read.csv("C://Users//sala-D19.RTIC-D19//Documents//Series//Datos históricos CMXCPO - copia.csv")
+##Cambio a serie de tiempo
+tamerica<-ts(america, start = 2017, frequency = 120)
+tcemex<-ts(cemex, start = 2017, frequency = 120)
+#Grafico
+plot(tamerica)
+##Descompongo la serie
+deame<-decompose(tamerica)
+##Quito el componente de estacionalidad
+amesesta<-tamerica-deame$seasonal
+##Grafico
+plot(amesesta)
+
+
+#####CORRELACIÒN Y COVARIANZA
+base<-read.csv("C://Users//sala-D19.RTIC-D19//Documents//Series//base.csv")
+base
+x<-base$X10.2..Tasa.de.desocupación
+y<-base$X10.5..Tasa.de.trabajo.asalariado
+n<-56
+
+
+###Covarianza
+ #Medias
+medx<-mean(x)
+medy<-mean(y)
+ #Resta
+xmenos<-x-medx
+ymenos<-y-medy
+##Cov
+cova<-(sum(xmenos*ymenos))/(n-1)
+cova
+##Comprobacion
+cov(x,y)
+
+###Correlacion
+corre<-cova/sqrt(var(x)*var(y))
+corre
+##Comprobacion
+cor(x,y)
