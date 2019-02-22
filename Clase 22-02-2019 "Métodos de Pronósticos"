@@ -1,0 +1,60 @@
+install.packages("installr")
+library(installr)
+updateR()
+
+version
+install.packages("ggplot2")
+require(ggplot2)
+install.packages("forecast")
+require(forecast)
+install.packages("xts")
+require(xts)
+install.packages("fpp2")
+require(fpp2)
+
+###Importar base de datos accion de netflix 22/02/18 al 22/02/2019
+net<-read.csv("C://Users//Alumno-H10//Documents//netflix.csv")
+tnet<-ts(net, start = 2018, frequency = 251)
+plot(tnet)
+
+###PRONÓSTICO CON MÉTODO DE LA MEDIA
+  # meanf(st, h)
+media<-meanf(tnet,20) #Hace el método con la serie de tiempo en 20 días
+###Cuando se hace la función mean da los puntos del pronóstico
+plot(media)
+
+###PRONÓSTICO CON MÉTODO DEL INGENUO
+  # naive(st, h)
+ingenuo<-naive(tnet,20)
+plot(ingenuo)
+ingenuo
+
+###PRONÓSTICO CON MÉTODO INGENUO ESTACIONAL
+  # snaive(st, h)
+ings<-snaive(tnet,252)
+plot(ings)
+
+###PRONÓSTICO DE LA DERIVA
+  # rwf(st, h, drift=TRUE)
+deriva<-rwf(tnet, 20, drift=TRUE)
+plot(deriva)
+
+
+
+#############CERVEZA
+cerveza<-window(ausbeer, start=1992, end=c(2007, 4)) #El window nos permite cortar una serie
+  #Grafica algunos pronósticos
+autoplot(cerveza)+autolayer(meanf(cerveza, h=11), series="Media", PI=FALSE)+
+  autolayer(naive(cerveza,h=11),series = "Ingenuo", PI=FALSE)+
+  autolayer(rwf(cerveza, h=11, drift = T), series = "Deriva", PI=FALSE)+
+  autolayer(snaive(cerveza, h=11), series = "Ingenuo estacional", PI=FALSE)+
+  ggtitle("PRONÓSTICOS PRODUCCIÓN CERVEZA")+xlab("Año")+ylab("Miles de litros")+
+  guides(colour=guide_legend(title = "Pronóstico"))
+  # El PI=FALSE hace que todas los pronósticos queden en el mismo gráfico
+  
+# Gráfica 2
+autoplot(cerveza)+autolayer(rwf(cerveza, h=11, drift = T), series="Deriva", PI=FALSE)+
+  autolayer(naive(cerveza,h=11),series = "Ingenuo", PI=FALSE)+
+  autolayer(snaive(cerveza, h=11), series = "Ingenuo estacional", PI=FALSE)+
+  ggtitle("PRONÓSTICOS PRODUCCIÓN CERVEZA")+xlab("Año")+ylab("Miles de litros")+
+  guides(colour=guide_legend(title = "Pronóstico"))
