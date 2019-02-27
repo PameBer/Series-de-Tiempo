@@ -1,0 +1,156 @@
+install.packages("zoo")
+require(zoo)
+install.packages("xts")
+require(xts)
+install.packages("forecast")
+require(forecast)
+install.packages("fma")
+require(fma)
+install.packages("fracdiff")
+require(fracdiff)
+install.packages("timeDate")
+require(timeDate)
+install.packages("lmtest")
+require(lmtest)
+install.packages("tseries")
+require(tseries)
+install.packages("urca")
+require(urca)
+install.packages("expsmooth")
+require(expsmooth)
+install.packages("ggplot2")
+require(ggplot2)
+install.packages("fpp2")
+require(fpp2)
+
+version
+
+############################################
+
+# RESIDUALES Y SUS GRÁFICAS
+
+help(goog200)
+pronos<-naive(goog200)
+names(pronos)
+res1<-residuals(naive(goog200))
+# plot Clase
+autoplot(goog200)
+# plot ResClase
+autoplot(res1)
+
+#Histograma para conocer la distribucion de los residuales
+
+gghistogram(res1)+ggtitle("Histograma de Residuales")
+
+# No se distribuye normal
+# El histograma sugiere que los residuos pueden no ser normales: la cola derecha 
+# parece demasiado larga, incluso cuando ignoramos el valor atípico
+
+# Después hacemos el análisis de correlación
+
+ggAcf(res1)
+
+# Las líneas azules nos dejan ver si alguno de los residuos está autocorrelacionado
+# Si pasa la línea azul, entonces ese residuo está autocorrelacionado
+# Si estan autocorrelacionados, entonces todavia podemos mejorar el pronóstico
+# El cálculo de las fronteras se basa en el 90 o 95 % de confianza en las pruebas 
+# de hipótesis
+# Los gráficos de ACF exponen que la media de los residuos es cercana a cero y no 
+# hay una autocorrelacion significativa en las series de residuos
+# Estos graficos muestran que el método ingenuo produce pronósticos relativamente 
+# precisos
+# Si no están autocorerlacionados los residuos en nuestra serie de tiempo, 
+# con media cero y varianza constante, entonces nuestra serie de tiempo es ruido 
+# blanco
+
+
+# Ejercicio
+# Tarea
+
+
+########################################################################
+
+# POBLACIÓN EN MÉXICO
+
+# 1 Graficar serie
+pob<-read.csv("C://Users//ALUMNO.SALAE-15//Downloads//Población.csv")
+pobts<-ts(pob, start = 1960)
+plot(pobts) #
+
+# 2 Elegir un pronóstico
+# Pronóstico de la Deriva
+# rwf(st, h, drift=TRUE)
+deriva<-rwf(pobts, 5, drift=TRUE)
+plot(deriva) #
+
+# 3 Graficar residuales
+respob<-residuals(rwf(pobts))
+autoplot(respob) #
+
+# 4 Graficar histograma para conocer la distribucion de los residuales
+gghistogram(respob)+ggtitle("Histograma de Residuales")
+#
+#No se distribuye normal y tiene un punto atípico
+
+# 5 Graficar la autocorrelación
+ggAcf(respob) #
+# Uno de los residuales preseta autocorrelación
+# Por lo tanto, el pronóstico todavía puede ser mejorado
+# Que los residuos presente autocorrelación, quiere decir que hay información
+# en los residuos que debe ser utilizada para calcular los pronósticos
+
+
+########################################################################
+
+# PIB: % DE CRECIMIENTO ANUAL
+# 1961 - 2017
+
+# 1 Graficar serie
+pib<-read.csv("C://Users//ALUMNO.SALAE-15//Downloads//PIB.csv")
+pibts<-ts(pib, start = 1961)
+autoplot(pibts) #
+
+# 2 Elegir un pronóstico
+# Pronótico con Método Ingenuo Estacional
+# snaive(st, h)
+ingest<-snaive(pibts,5)
+plot(ingest) #
+
+# 3 Graficar residuales
+respib<-residuals(rwf(pibts))
+autoplot(respib) #
+
+# 4 Graficar histograma para conocer la distribucion de los residuales
+gghistogram(respib)+ggtitle("Histograma de Residuales")
+#No se distribuye normal y tiene un punto atípico
+
+# 5 Graficar la autocorrelación
+ggAcf(respib)
+# Uno de los residuales preseta autocorrelación
+
+##############################
+
+# televisa Acciones
+
+# 1 Graficar serie
+tel<-read.csv("C://Users//ALUMNO.SALAE-15//Downloads//Tele.csv")
+telts<-ts(tel, start = 2018, frequency = 250)
+plot(telts) #
+
+# 2 Elegir un pronóstico
+# Pronóstico de la Deriva
+# rwf(st, h, drift=TRUE)
+derivat<-rwf(telts, 5, drift=TRUE)
+plot(derivat) #
+
+# 3 Graficar residuales
+restel<-residuals(rwf(telts))
+autoplot(restel) #
+
+# 4 Graficar histograma para conocer la distribucion de los residuales
+gghistogram(restel)+ggtitle("Histograma de Residuales")
+#
+
+# 5 Graficar la autocorrelación
+ggAcf(restel) #
+# Dos de los residuales presetan autocorrelación
