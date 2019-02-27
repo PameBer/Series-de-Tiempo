@@ -1,0 +1,69 @@
+###PRUEBA DE BOX PIERCE
+###PRUEBA DE LJUNG-BOX
+### Contrasta las correlaciones de los diferentes residuos
+
+
+### Box.test(res, lag=10, fitdf=0)
+  # res=residuos, lag=no. de residuos, fitdf=0, type=L
+  # p-value ,ayor a .05 implica que los residuos no son autocorrelacionados
+
+### Ljung-box sirve para ver si estan autocorrelacionados sin necesidad de ver el
+  # histograma y es màs efectivo
+
+### Ruido blanco= media igual a cero y varianza constante
+  # sirve para hacer pronósticos
+
+
+  # El tamaño del conjunto de prueba suele ser del 20%
+
+### Suavizado expnencial (SES)=le da mayor peso a los ultimos datos anque pondere
+  # con todos
+  # SES=(SERIE DE TIMPO, ALPHA=, INITIAL=SIMPLE, H=8) por default da el simple
+
+PIB<-read.csv("C://Users//sala-D19.RTIC-D19//Downloads//PIB.csv")
+pibts<-ts(PIB, start = 1961)
+plot(pibts)
+
+mod1<-ses(pibts, alpha = .1, initial = "simple", h=8)
+mod2<-ses(pibts, alpha=.3, initial="simple", h=8)
+mod3<-ses(pibts, alpha=.9, initial="simple", h=8)
+
+plot(mod1, ylab = "PIB", xlab = "Año", main = "PIB", type = "o")
+lines(fitted(mod1), col="blue", type="o")
+lines(fitted(mod2), col="red", type="o")
+lines(fitted(mod3), col="green", type="o")
+legend("topleft", lty = 1, col = c("1", "blue", "red", "green"),
+       c("data", expression(alpha==0.1), expression(alpha==0.3),
+         expression(alpha==.9)), pch = 1)
+###  lo que se está graficandoson los datos reales del modelo 1 y en las lineas
+   # el fitted indica que va a graficar los modelos ajustados
+
+#### el modelo SES encuentra el pronostico con la suma de los valores del último
+   # al primero multiplicados por el alpha (ver la fórmula)
+###  lo que se está graficandoson los datos reales del modelo 1
+
+  ## entre más cercano a 1 el suavizado es el más agresivo
+
+plot(mod2, ylab = "PIB", xlab = "Año", main = "PIB", type = "o")
+plot(mod3, ylab = "PIB", xlab = "Año", main = "PIB", type = "o")
+
+
+#### EJERCICIO
+### Con la función window separar la serie del PIB en datos de entrenamiento y 
+  # datos de prueba (20% = 11 datos) y graficar los modelos solo en lo que corresponde a los 
+  # datos de prueba
+
+entre<- window(pibts, start=1961, end=2006)
+prueba<-window(pibts, start=2006)
+
+mod1p<-ses(prueba, alpha = .1, initial = "simple", h=8)
+mod2p<-ses(prueba, alpha=.3, initial="simple", h=8)
+mod3p<-ses(prueba, alpha=.9, initial="simple", h=8)
+
+plot(mod1p, ylab = "PIB", xlab = "Año", main = "PIB", type = "o")
+lines(fitted(mod1p), col="blue", type="o")
+lines(fitted(mod2p), col="red", type="o")
+lines(fitted(mod3p), col="green", type="o")
+legend("topleft", lty = 1, col = c("1", "blue", "red", "green"),
+       c("data", expression(alpha==0.1), expression(alpha==0.3),
+         expression(alpha==.9)), pch = 1)
