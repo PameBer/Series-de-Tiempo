@@ -1,0 +1,63 @@
+##### Box Cox sirve para normalizar los datos y así poder hacer pronósticos
+
+## Los residuales tienen que ver con los datos observados y los errores se ven en el 
+ # pronóstico. Saber los errores nos va a decir si el pronóstico es bueno o malo, entre más 
+ # cercano a cero es mejor.
+## Hay varios tipos de errores.
+## Vamos a usar los errores para comparar los prónosticos hechos con los diferentes métodos
+ # y ver cuál es mejor
+ # MAE -> Media del valor absoluto de et
+ # RMST -> Media
+ # Los dos anteriores son errores de escala
+## Los errores de porcentaje es MAPE
+ # El MAPE impone una mayor penalización a errores negativos que a los positivos
+
+require(fpp2)
+
+###### ANÁLISIS GRÁFICO
+beer<-window(ausbeer, start=1992, end=c(2007, 4))
+beerfit1<-meanf(beer,h=2)
+beerfit2<-rwf(beer, h=10)
+beerfit3<-snaive(beer, h=10)
+autoplot(window(ausbeer, start=1992))+
+  autolayer(beerfit1, series="Media", PI=FALSE)+
+  autolayer(beerfit2,series = "Deriva", PI=FALSE)+
+  autolayer(beerfit3, series = "Ingenuo estacional", PI=FALSE)+
+  ggtitle("PRONÓSTICO")+xlab("Año")+ylab("Litros")+
+  guides(colour=guide_legend(title = "Pronóstico"))
+## La gráfica muestra tres métodos de pronóstico aplicados a la producción de cerveza 
+ # australiana trimestral utilizando datos hasta finales de 2007. 
+ # También se muestran valores reales (dato de prueba) para el período 2008-2010
+## Graficamente el prónostico que deberiamos elegir es el del Ingenuo Estacional
+ # Los residuales los toma de la parte de la izquierda y los errores de la derecha (donde
+ # empiezan los pronósticos)
+
+###### OBTENER LOS ERRORES
+
+beer2<-window(ausbeer, start=2008)
+accuracy(beerfit1, beer2)
+accuracy(beerfit2, beer2)
+accuracy(beerfit3, beer2)
+## Empiezo en el 2008 porque es donde inicia el prónostico (los datos de prueba)
+## El accuracy es para que nos de la matriz de los errores y vamos a comparar los 
+ # errores de cada método
+## De acuerdo a la gráfica el pronóstico que debe estar mejor es el del 3
+             
+######## AJUSTE 1
+ #                   ME     RMSE      MAE        MPE     MAPE     MASE       ACF1 Theil's U
+ # Training set   0.000 43.62858 35.23438 -0.9365102 7.886776 2.463942 -0.1091511        NA
+ # Test set     -30.375 33.87684 30.37500 -7.6476648 7.647665 2.124126 -0.5000000    1.5125
+ 
+######## AJUSTE 2
+#                      ME     RMSE      MAE         MPE     MAPE     MASE        ACF1    Theil's U
+#  Training set   0.4761905 65.31511 54.73016  -0.9162496 12.16415 3.827284 -0.24098292          NA
+#  Test set     -51.4000000 62.69290 57.40000 -12.9549160 14.18442 4.013986 -0.06905715     1.254009
+
+######## AJUSTE 3
+#                 ME     RMSE  MAE        MPE     MAPE      MASE       ACF1 Theil's U
+# Training set -2.133333 16.78193 14.3 -0.5537713 3.313685 1.0000000 -0.2876333        NA
+# Test set      5.200000 14.31084 13.4  1.1475536 3.168503 0.9370629  0.1318407  0.298728
+
+## En este caso los errores obtenidos nos dieron como resultado la misma conclusión
+ # que el método gráfico, obteniendo como resultado que el mejor método de prónostico
+ # es el método 3, en este caso, el método de ingenuo estacional
