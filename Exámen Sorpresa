@@ -1,0 +1,263 @@
+###### 
+
+#### 1. Calcular los residuales con un pronóstico ingenuo estacional aplicado a la serie de ausbeer
+
+  ### SERIE DE TIEMPO
+beer<-ausbeer
+beer
+  ### PROYECCIONES
+ingbeer<-naive(beer,h=20)
+ingesbeer<-snaive(beer,h=20)
+
+  ### RESIDUALES
+resingb<-residuals(ingbeer)
+resingeb<-residuals(ingesbeer)
+
+ ### 1.1 Prueba si los residuales son ruido blanco y se distribuyen normal
+
+   ## DISTRIBUCIÓN
+gghistogram(resingb)+ggtitle("RESIDUALES DEL MÉTODO DEL INGENUO")
+gghistogram(resingeb)+ggtitle("RESIDUALES DEL MÉTODO DEL INGENUO ESTACIONAL")
+    ### Ninuno de los métodos proporciona residuales que se distribuyan normal
+
+  ## RUIDO BLANCO
+ggAcf(resingb)
+ggAcf(resingeb)
+    ### Hay correlación en los residuales, por lo tanto se puede descraatar la presencia de 
+     ## ruido blanco
+
+#### 2. Calcular residuales para las series WWWusage y bricksq y seleccionar que pronóstico es más 
+   # apropiado ingenuo o ingenuo estacional en cada serie. ARGUMENTA TU RESPUESTA
+
+  ### SERIES DE TIEMPO
+inter<-WWWusage
+ladri<-bricksq
+
+  ### PRONÓSTICOS
+inginter<-naive(beer,h=30)
+plot(inginter)
+ingesinter<-snaive(beer,h=30)
+plot(ingesinter)
+   
+
+ingilad<-naive(ladri,h=20)
+plot(ingilad)
+ingeslad<-snaive(ladri,h=20)
+plot(ingeslad)
+###### Cuando ambos métodos nos ofrecen lo mismo nos quedamos con el método más facil
+
+
+#### 1. Calcular los residuales con un pronóstico ingenuo estacional aplicado a la serie de ausbeer
+
+  ### SERIE DE TIEMPO
+beer<-ausbeer
+beer
+  ### PROYECCIONES
+ingbeer<-naive(beer,h=20)
+ingesbeer<-snaive(beer,h=20)
+
+  ### RESIDUALES
+resingb<-residuals(ingbeer)
+resingeb<-residuals(ingesbeer)
+
+ ### 1.1 Prueba si los residuales son ruido blanco y se distribuyen normal
+
+   ## DISTRIBUCIÓN
+gghistogram(resingb)+ggtitle("RESIDUALES DEL MÉTODO DEL INGENUO")
+gghistogram(resingeb)+ggtitle("RESIDUALES DEL MÉTODO DEL INGENUO ESTACIONAL")
+    ### Ninuno de los métodos proporciona residuales que se distribuyan normal
+
+  ## RUIDO BLANCO
+ggAcf(resingb)
+ggAcf(resingeb)
+    ### Hay correlación en los residuales, por lo tanto se puede descraatar la presencia de 
+     ## ruido blanco
+
+#### 2. Calcular residuales para las series WWWusage y bricksq y seleccionar que pronóstico es más 
+   # apropiado ingenuo o ingenuo estacional en cada serie. ARGUMENTA TU RESPUESTA
+
+  ### SERIES DE TIEMPO
+inter<-WWWusage
+ladri<-bricksq
+
+  ### PRONÓSTICOS
+inginter<-naive(beer,h=30)
+plot(inginter)
+ingesinter<-snaive(beer,h=30)
+plot(ingesinter)
+   
+
+ingilad<-naive(ladri,h=20)
+plot(ingilad)
+ingeslad<-snaive(ladri,h=20)
+plot(ingeslad)
+     ### En ambos casos, graficamente se ajusta mejor el método del ingenuo estacional porque 
+       # continúa con el comportamiento de la serie
+
+### RESIDUALES
+resintin<-residuals(inginter)
+resintine<-residuals(ingesinter)
+
+gghistogram(resintin)
+gghistogram(resintine)
+
+resinlad<-residuals(ingilad)
+resinelad<-residuals(ingeslad)
+
+gghistogram(resinlad)
+gghistogram(resinelad)
+
+     ### De acuerdo a los residuales, el mejor pronóstico es el del ingenuo estacional 
+#### 3. Contesta falso o verdadero y justifica tu respuesta
+   # A) Los buenos métodos de pronóstico deberían tener residuos distribuidos normalmente
+        # VERDADERO Se espera que los residuales se distribuyan normalmente para que cumplan con 
+        # el supuesto de homocedasticidad
+   # B) Un modelo con pequeños residuos dará buenos pronósticos
+        # VERDADERO Un modelo con residuos pequeños da como resultado un buen pronóstico porque
+        # significa que se acerca más a los resultados reales
+   # C) La mejor medida de los errores del pronóstico es MAPE
+        # FALSO No siempre es el más eficaz aunque sea el que más se usa
+
+#### 4. ¿Qué quiere decir que una serie de tiempo sea ruido blanco?
+        # Que no extiste autocorrelación, hay varianza constante y media cero
+
+#### 6. Usa la serie de ibmclose
+ibm<-ibmclose
+   #    -Produce una gráfica de esta serie
+autoplot(ibm)
+   #    -Divida los datos en un conjunto de entrenamiento de 300 observaciones y un conjunto de 
+   #    prueba de 69 observaciones
+entre<-window(ibm, start=1, end=300)
+prueba<-window(ibm, start=301)
+   #    -Utilice varios métodos pra pronosticar (simples) el conjunto de entrenamiento y compara los
+   #    resultados en el conjunto de prueba. ¿Qué método es el mejor? JUSTIFIQUE SU RESPUESTA
+medibm<-meanf(entre,h=69)
+deribm<-rwf(entre, h=69)
+ingesibm<-snaive(entre, h=69)
+ingibm<-naive(entre, h=69)
+autoplot(ibm)+
+  autolayer(medibm, series="Media", PI=FALSE)+
+  autolayer(deribm,series = "Deriva", PI=FALSE)+
+  autolayer(ingesibm, series = "Ingenuo estacional", PI=FALSE)+
+  autolayer(ingibm, series = "Ingenuo", PI=FALSE)+
+  ggtitle("PRONÓSTICO")+
+  guides(colour=guide_legend(title = "Pronóstico"))
+   #    -Compruebe los residuos de su método elegido. ¿Son ruido blanco?
+resibm1<-residuals(medibm)
+resibm2<-residuals(deribm)
+resibm3<-residuals(ingesibm)
+resibm4<-residuals(ingibm)
+
+ggAcf(resibm1)
+ggAcf(resibm2)
+ggAcf(resibm3)
+ggAcf(resibm4)
+  # No son ruido blanco
+
+#### 7. Usa la serie de hsales
+vent<-hsales
+vent
+#    -Produce una gráfica de esta serie
+autoplot(vent)
+#    -Divida los datos en un conjunto de entrenamiento de 300 observaciones y un conjunto de 
+#    prueba de 69 observaciones
+entrev<-window(vent, start=1973, end=1993)
+pruebav<-window(vent, start=1994)
+#    -Utilice varios métodos pra pronosticar (simples) el conjunto de entrenamiento y compara los
+#    resultados en el conjunto de prueba. ¿Qué método es el mejor? JUSTIFIQUE SU RESPUESTA
+medven<-meanf(entrev,h=36)
+derven<-rwf(entrev, h=36)
+ingesven<-snaive(entrev, h=36)
+ingven<-naive(entrev, h=36)
+autoplot(vent)+
+  autolayer(medven, series="Media", PI=FALSE)+
+  autolayer(derven,series = "Deriva", PI=FALSE)+
+  autolayer(ingesven, series = "Ingenuo estacional", PI=FALSE)+
+  autolayer(ingven, series = "Ingenuo", PI=FALSE)+
+  ggtitle("PRONÓSTICO")+
+  guides(colour=guide_legend(title = "Pronóstico"))
+#    -Compruebe los residuos de su método elegido. ¿Son ruido blanco?
+
+### RESIDUALES
+resintin<-residuals(inginter)
+resintine<-residuals(ingesinter)
+
+gghistogram(resintin)
+gghistogram(resintine)
+
+resinlad<-residuals(ingilad)
+resinelad<-residuals(ingeslad)
+
+gghistogram(resinlad)
+gghistogram(resinelad)
+
+     ### De acuerdo a los residuales, el mejor pronóstico es el del ingenuo estacional 
+#### 3. Contesta falso o verdadero y justifica tu respuesta
+   # A) Los buenos métodos de pronóstico deberían tener residuos distribuidos normalmente
+        # VERDADERO Se espera que los residuales se distribuyan normalmente para que cumplan con 
+        # el supuesto de homocedasticidad
+   # B) Un modelo con pequeños residuos dará buenos pronósticos
+        # VERDADERO Un modelo con residuos pequeños da como resultado un buen pronóstico porque
+        # significa que se acerca más a los resultados reales
+   # C) La mejor medida de los errores del pronóstico es MAPE
+        # FALSO No siempre es el más eficaz aunque sea el que más se usa
+
+#### 4. ¿Qué quiere decir que una serie de tiempo sea ruido blanco?
+        # Que no extiste autocorrelación, hay varianza constante y media cero
+
+#### 6. Usa la serie de ibmclose
+ibm<-ibmclose
+   #    -Produce una gráfica de esta serie
+autoplot(ibm)
+   #    -Divida los datos en un conjunto de entrenamiento de 300 observaciones y un conjunto de 
+   #    prueba de 69 observaciones
+entre<-window(ibm, start=1, end=300)
+prueba<-window(ibm, start=301)
+   #    -Utilice varios métodos pra pronosticar (simples) el conjunto de entrenamiento y compara los
+   #    resultados en el conjunto de prueba. ¿Qué método es el mejor? JUSTIFIQUE SU RESPUESTA
+medibm<-meanf(entre,h=69)
+deribm<-rwf(entre, h=69)
+ingesibm<-snaive(entre, h=69)
+ingibm<-naive(entre, h=69)
+autoplot(ibm)+
+  autolayer(medibm, series="Media", PI=FALSE)+
+  autolayer(deribm,series = "Deriva", PI=FALSE)+
+  autolayer(ingesibm, series = "Ingenuo estacional", PI=FALSE)+
+  autolayer(ingibm, series = "Ingenuo", PI=FALSE)+
+  ggtitle("PRONÓSTICO")+
+  guides(colour=guide_legend(title = "Pronóstico"))
+   #    -Compruebe los residuos de su método elegido. ¿Son ruido blanco?
+resibm1<-residuals(medibm)
+resibm2<-residuals(deribm)
+resibm3<-residuals(ingesibm)
+resibm4<-residuals(ingibm)
+
+ggAcf(resibm1)
+ggAcf(resibm2)
+ggAcf(resibm3)
+ggAcf(resibm4)
+  # No son ruido blanco
+
+#### 7. Usa la serie de hsales
+vent<-hsales
+vent
+#    -Produce una gráfica de esta serie
+autoplot(vent)
+#    -Divida los datos en un conjunto de entrenamiento de 300 observaciones y un conjunto de 
+#    prueba de 69 observaciones
+entrev<-window(vent, start=1973, end=1993)
+pruebav<-window(vent, start=1994)
+#    -Utilice varios métodos pra pronosticar (simples) el conjunto de entrenamiento y compara los
+#    resultados en el conjunto de prueba. ¿Qué método es el mejor? JUSTIFIQUE SU RESPUESTA
+medven<-meanf(entrev,h=36)
+derven<-rwf(entrev, h=36)
+ingesven<-snaive(entrev, h=36)
+ingven<-naive(entrev, h=36)
+autoplot(vent)+
+  autolayer(medven, series="Media", PI=FALSE)+
+  autolayer(derven,series = "Deriva", PI=FALSE)+
+  autolayer(ingesven, series = "Ingenuo estacional", PI=FALSE)+
+  autolayer(ingven, series = "Ingenuo", PI=FALSE)+
+  ggtitle("PRONÓSTICO")+
+  guides(colour=guide_legend(title = "Pronóstico"))
+#    -Compruebe los residuos de su método elegido. ¿Son ruido blanco?
