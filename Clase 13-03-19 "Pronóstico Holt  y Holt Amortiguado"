@@ -1,0 +1,85 @@
+####PRONÓSTICO DE HOLT
+air<-window(ausair, start = 1990)
+air
+prono<-holt(air, h=5)
+autoplot(prono)
+
+########PRONÓSTICO AMORTIGUADO
+prono1<-holt(air, h=15)
+prono2<-holt(air, damped=TRUE, phi=0.9, h=15)
+autoplot(air)+
+  autolayer(prono1, series = "Holt", PI=FALSE)+
+  autolayer(prono2, series = "Amortiguado Holt", PI=FALSE)+
+  ggtitle("Pronósticos")+xlab("Año")+ylab("Pasajeros")+
+  guides(colour=guide_legend(title= "PRONO"))
+     #### Cuando phi es 1 el pronostico de Holt debe ser igual al pronóstico del holt amortiguado
+
+###### SES
+prono3<-ses(air, alpha = .9, initial = "simple", h=15)
+autoplot(prono3)
+
+autoplot(air)+
+  autolayer(prono1, series = "Holt", PI=FALSE)+
+  autolayer(prono2, series = "Amortiguado Holt", PI=FALSE)+
+  autolayer(prono3, series = "SES", PI=FALSE)+
+  ggtitle("Pronósticos")+xlab("Año")+ylab("Pasajeros")+
+  guides(colour=guide_legend(title= "PRONO"))
+
+###### Para ver que pasa con el pronostico cuando phi es muy cercano a 1 
+#prono11<-holt(air, h=15)
+#prono21<-holt(air, damped=TRUE, phi=0.9, h=15)
+#autoplot(air)+
+  #autolayer(prono11, series = "Holt", PI=FALSE)+
+  #autolayer(prono21, series = "Amortiguado Holt", PI=FALSE)+
+  #ggtitle("Pronósticos")+xlab("Año")+ylab("Pasajeros")+
+  #guides(colour=guide_legend(title= "PRONO"))
+      ### No se puede porque la función no acepta esos parámetros
+
+### TScv es una fn. para que nos regrese los errores del pronostico
+  # tsCV(serie, pronostico, periodo)
+e1<-tsCV(air, ses, h=1)
+e1
+e2<-tsCV(air, holt, h=1)
+e3<-tsCV(air, holt, damped=T, h=1)
+
+
+MSE:
+  mean(e1^2, na.rm=TRUE)
+  #10.58
+  mean(e2^2, na.rm = TRUE)
+  #6.57
+  mean(e3^2, na.rm = T)
+  #7.38
+  
+MAE:
+  mean(abs(e1), na.rm=T)
+  #2.43
+  mean(abs(e2), na.rm = T)
+  #1.80
+  mean(abs(e3), na.rm = T)
+  #1.86
+  
+#############PRONÓSTICO PIB
+pib<-read.csv("C://Users//ALUMNO-D12//Documents//PIB.csv")
+tspib<-ts(pib, start=1980)
+
+ ## HOLT
+pronpib1<-holt(tspib, h=5)
+
+ ## HOLT AMORTIGUADO
+pronpib2<-holt(tspib, damped=TRUE, phi=0.8, h=5)
+
+ ## SES
+pronpib3<-ses(tspib, alpha = .8, initial = "simple", h=5)
+
+#### Gráfica
+autoplot(tspib)+
+  autolayer(pronpib1, series = "Holt", PI=FALSE)+
+  autolayer(pronpib2, series = "Amortiguado Holt", PI=FALSE)+
+  autolayer(pronpib3, series = "SES", PI=FALSE)+
+  ggtitle("Pronósticos")+xlab("Año")+ylab("PIB (Porcentaje)")+
+  guides(colour=guide_legend(title= "PRONÓSTICO"))
+
+erro1<-tsCV(tspib, ses, h=1)
+erro2<-tsCV(tspib, holt, h=1)
+erro3<-tsCV(tspib, holt, damped=T, h=1)
