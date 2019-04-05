@@ -1,0 +1,30 @@
+install.packages("tseries")
+
+bim<-read.csv("C://Users//ALUMNO-D12//Downloads//BIMBO.csv")
+
+bimbo<-ts(bim, frequency = 254, start=2018)
+### Revisar si nuestra base es estacionaria
+  # Se aplica la prueba de la raiz universitaria a traves de la 
+  # adf.test y esperamos que el p-value sea menor a .05
+adf.test(bimbo) #Ver si la serie es estacionaria
+bimbo1<-diff(bimbo)  #Aplicamos la primera diferenciación con la función diff
+                     #debido que la serie original no es estacionaria
+adf.test(bimbo1)
+
+### Aplicamos dos correlogramas 
+par(mfrow=c(1,2))
+acf(bimbo1)
+pacf(bimbo1)
+
+## El p se podría sacar con las líneas que se pasan en el acf, en este caso p=3 
+ # para q se ve el pacf, en este caso q=4
+ # En realidad un p no pasa de 4
+?Arima
+modbim1<-Arima(bimbo1, order = c(0, 1, 1))
+modbim2<-Arima(bimbo1, order = c(0, 1, 2))
+modbim3<-Arima(bimbo1,order = c(0, 1, 3))
+modbim4<-Arima(bimbo1, order = c(0, 1, 4))
+modbim1
+modbim2
+modbim3
+modbim4
